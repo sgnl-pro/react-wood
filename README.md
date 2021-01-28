@@ -1,22 +1,19 @@
-# React-Wood
+# @sgnl-pro/react-tree
 
-[![NPM](https://img.shields.io/npm/v/react-wood?style=flat)](https://www.npmjs.com/package/react-wood)
-[![npm bundle size](https://img.shields.io/bundlephobia/min/react-wood?color=success&label=minified&style=flat)](https://bundlephobia.com/result?p=react-wood)
-
-> 🌳 A tree view component for React.
+> A tree view component for React.
 
 ## Installation
 ### NPM
 ```sh
-npm install --save react-wood
+npm install --save @sgnl-pro/react-tree
 ```
 
 **or**
 
 ### Yarn
 ```sh
-yarn add react-wood
+yarn add @sgnl-pro/react-tree
 ```
 
 ## License
-MIT © [Alexey Ledenev](https://github.com/alexey-ledenev)
+MIT

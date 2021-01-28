@@ -1,12 +1,11 @@
 {
-  "name": "react-wood",
+  "name": "@sgnl-pro/react-tree",
   "description": "A tree view component for React",
   "author": "Alexey L.",
   "version": "0.1.0",
   "license": "MIT",
-  "repository": "https://github.com/alexey-ledenev/react-wood.git",
   "main": "dist/index.js",
-  "module": "dist/react-wood.esm.js",
+  "module": "dist/react-tree.esm.js",
   "typings": "dist/index.d.ts",
   "files": [
     "dist",
@@ -46,11 +45,11 @@
   },
   "size-limit": [
     {
-      "path": "dist/react-wood.cjs.production.min.js",
+      "path": "dist/react-tree.cjs.production.min.js",
       "limit": "10 KB"
     },
     {
-      "path": "dist/react-wood.esm.js",
+      "path": "dist/react-tree.esm.js",
       "limit": "10 KB"
     }
   ],
