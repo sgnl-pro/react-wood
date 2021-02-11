@@ -2,7 +2,7 @@
   "name": "@sgnl-pro/react-tree",
   "description": "A tree view component for React",
   "author": "Alexey L.",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/react-tree.esm.js",
