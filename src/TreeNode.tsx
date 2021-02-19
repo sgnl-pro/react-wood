@@ -52,23 +52,29 @@ export const TreeNode: FC<ITreeNodeProps> = ({
 }) => {
   const { toggleExpanded, toggleSelected } = useTreeActions();
   const { expandedIds, selectedNodes } = useTreeState();
+
   const isParent = item.children !== void 0;
   const expanded = expandedIds?.[item.id] === true;
   const selected = selectedNodes?.[item.id] !== undefined;
+  const withCheckbox = selectOn === 'check';
+  const selectable = isSelectable(selectionType, isParent);
 
   const onNodeClick = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
     e.stopPropagation();
-    if (selectOn === 'check' && e.currentTarget.tagName === 'input') {
-      return;
+    if (withCheckbox || selectable === false) {
+      toggleExpanded(item, expanded);
+    } else {
+      toggleSelected(item);
     }
+  };
+
+  const onIconClick = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
+    e.stopPropagation();
     toggleExpanded(item, expanded);
   };
 
   const renderChecker = (): ReactNode => {
-    if (
-      selectOn === 'check' &&
-      isSelectable(selectionType, isParent) === true
-    ) {
+    if (withCheckbox && selectable === true) {
       const onCheck = () => {
         toggleSelected(item);
       };
@@ -121,6 +127,7 @@ export const TreeNode: FC<ITreeNodeProps> = ({
           expanded={expanded}
           className={iconBoxClassName}
           iconClassName={iconClassName}
+          onClick={onIconClick}
         >
           {typeof renderIcon === 'function' &&
             renderIcon(expanded, selected, isParent, item)}
