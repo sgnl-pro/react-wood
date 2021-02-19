@@ -1,5 +1,5 @@
 export interface ITreeItem {
-  id: string | number;
+  id: string;
   label: string;
   children?: ITreeItem[] | null;
 }
