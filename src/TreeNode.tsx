@@ -1,6 +1,6 @@
-import React, { FC, ReactNode, useRef } from 'react';
+import React, { FC, ReactNode } from 'react';
 import cn from './utils/classNames';
-import { ITreeItem } from './types';
+import { ITreeItem, SelectAction, SelectionType } from './types';
 import { useTreeActions } from './context/useTreeActions';
 import { useTreeState } from './context/useTreeState';
 import { NodeContent } from './NodeContent';
@@ -8,14 +8,22 @@ import { NodeLabel } from './NodeLabel';
 import { NodeIcon } from './NodeIcon';
 import s from './styles/Tree.module.sass';
 
+const isSelectable = (selectionType: SelectionType, isParent: boolean) =>
+  selectionType === SelectionType.All ||
+  (selectionType === SelectionType.Parent && isParent === true) ||
+  (selectionType === SelectionType.Child && isParent === false);
+
 export interface ITreeNodeProps {
   item: ITreeItem;
+  selectionType: SelectionType;
+  selectOn: SelectAction;
   className?: string;
   activeClassName?: string;
   contentClassName?: string;
   iconBoxClassName?: string;
   iconClassName?: string;
   labelClassName?: string;
+  renderCheckbox?: (checked: boolean, onChange: () => void) => ReactNode;
   renderData?: (node: ITreeItem, selected: boolean) => ReactNode;
   renderIcon?: (
     expanded: boolean,
@@ -26,65 +34,52 @@ export interface ITreeNodeProps {
   loader?: ReactNode;
 }
 
-const DBL_CLICK_DELAY = 200;
-
 export const TreeNode: FC<ITreeNodeProps> = ({
   item,
+  selectionType,
+  selectOn,
   className,
   activeClassName,
   contentClassName,
   iconBoxClassName,
   iconClassName,
   labelClassName,
+  renderCheckbox,
   renderData,
   renderIcon,
   loader,
   children,
 }) => {
-  const doubleClickCheck = useRef({
-    timer: 0,
-    prevent: false,
-  });
   const { toggleExpanded, toggleSelected } = useTreeActions();
   const { expandedIds, selectedNodes } = useTreeState();
-  const withChildren = item.children !== void 0;
+  const isParent = item.children !== void 0;
   const expanded = expandedIds?.[item.id] === true;
   const selected = selectedNodes?.[item.id] !== undefined;
 
-  const onSelectNode = (node: ITreeItem) => {
-    toggleSelected(node);
-  };
-
   const onNodeClick = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
     e.stopPropagation();
-    doubleClickCheck.current.timer = window.setTimeout(() => {
-      if (!doubleClickCheck.current.prevent) {
-        if (e.ctrlKey || e.metaKey) {
-          onSelectNode(item);
-        } else {
-          toggleExpanded(item, expanded);
-        }
-      }
-      doubleClickCheck.current.prevent = false;
-    }, DBL_CLICK_DELAY);
+    if (selectOn === 'check' && e.currentTarget.tagName === 'input') {
+      return;
+    }
+    toggleExpanded(item, expanded);
   };
-  const onNodeDoubleClick = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
-    e.stopPropagation();
-    clearTimeout(doubleClickCheck.current.timer);
-    doubleClickCheck.current.prevent = true;
-    onSelectNode(item);
+  const onCheck = () => {
+    toggleSelected(item);
   };
 
   const renderNode = (n: ITreeItem) => (
     <TreeNode
       key={n.id}
       item={n}
+      selectionType={selectionType}
+      selectOn={selectOn}
       className={className}
       activeClassName={activeClassName}
       contentClassName={contentClassName}
       iconBoxClassName={iconBoxClassName}
       iconClassName={iconClassName}
       labelClassName={labelClassName}
+      renderCheckbox={renderCheckbox}
       renderData={renderData}
       renderIcon={renderIcon}
       loader={loader}
@@ -95,28 +90,37 @@ export const TreeNode: FC<ITreeNodeProps> = ({
     <div
       className={cn(
         s.node,
-        selected && s.selected,
         className,
-        selected && activeClassName
+        selected === true && [s.selected, activeClassName]
       )}
-      onClick={onNodeClick}
-      onDoubleClick={onNodeDoubleClick}
     >
-      <NodeContent className={contentClassName}>
+      <NodeContent className={contentClassName} onClick={onNodeClick}>
         <NodeIcon
-          isParent={withChildren}
+          isParent={isParent}
           expanded={expanded}
           className={iconBoxClassName}
           iconClassName={iconClassName}
         >
           {typeof renderIcon === 'function' &&
-            renderIcon(expanded, selected, withChildren, item)}
+            renderIcon(expanded, selected, isParent, item)}
         </NodeIcon>
+        {selectOn === 'check' &&
+        isSelectable(selectionType, isParent) &&
+        typeof renderCheckbox === 'function' ? (
+          renderCheckbox(selected, onCheck)
+        ) : (
+          <input
+            type="checkbox"
+            checked={selected}
+            onChange={onCheck}
+            onClick={(e) => e.stopPropagation()}
+          />
+        )}
         <NodeLabel className={labelClassName}>{item.label}</NodeLabel>
         {typeof renderData === 'function' && renderData(item, selected)}
       </NodeContent>
       {children}
-      {withChildren &&
+      {isParent &&
         expanded &&
         (Array.isArray(item.children)
           ? item.children.map(renderNode)

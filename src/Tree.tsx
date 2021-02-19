@@ -2,7 +2,7 @@ import React, { FC, ReactNode } from 'react';
 import cn from './utils/classNames';
 import { TreeContextProvider } from './context/TreeContextProvider';
 import { TreeNode } from './TreeNode';
-import { ITreeItem, SelectionType } from './types';
+import { ITreeItem, SelectAction, SelectionType } from './types';
 import s from './styles/Tree.module.sass';
 
 export interface ITreeProps {
@@ -15,6 +15,12 @@ export interface ITreeProps {
   selectionType?: SelectionType;
   /** Разрешен ли выбор нескольких элементов. */
   multipleSelection?: boolean;
+  /**
+   * Какое событие будет вызывать выбор элемента:
+   * click - клик по тексту (клик по иконке будет вызывать раскрытие элемента);
+   * check - изменение состояния чекбокса (клик по элементу будет вызывать его раскрытие).
+   */
+  selectAction?: SelectAction;
   /**
    * Отключить выбор для заданных элементов.
    */
@@ -39,6 +45,8 @@ export interface ITreeProps {
    * selectedNodes: массив выбранных в текущий момент элементов.
    */
   onSelect?: (selectedNodes: ITreeItem[]) => void;
+  /** Функция для отрисовки элемента для выбора элементов. */
+  renderCustomCheckbox?: (checked: boolean, onChange: () => void) => ReactNode;
   /** Функция для отрисовки дополнительных элементов внутри узла. */
   renderNodeData?: (node: ITreeItem, selected: boolean) => ReactNode;
   /** Функция для отрисовки иконки узла. */
@@ -58,6 +66,7 @@ export const Tree: FC<ITreeProps> = ({
   nodes,
   selectionType = SelectionType.None,
   multipleSelection = false,
+  selectAction = 'click',
   disabledIds,
   containerClassName,
   nodeClassName,
@@ -68,6 +77,7 @@ export const Tree: FC<ITreeProps> = ({
   nodeLabelClassName,
   onNodeExpand,
   onSelect,
+  renderCustomCheckbox,
   renderNodeData,
   renderNodeIcon,
   loader,
@@ -78,12 +88,15 @@ export const Tree: FC<ITreeProps> = ({
     <TreeNode
       key={n.id}
       item={n}
+      selectionType={selectionType}
+      selectOn={selectAction}
       className={nodeClassName}
       activeClassName={nodeActiveClassName}
       contentClassName={nodeContentClassName}
       iconBoxClassName={nodeIconBoxClassName}
       iconClassName={nodeIconClassName}
       labelClassName={nodeLabelClassName}
+      renderCheckbox={renderCustomCheckbox}
       renderData={renderNodeData}
       renderIcon={renderNodeIcon}
       loader={loader}

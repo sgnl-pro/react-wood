@@ -10,3 +10,5 @@ export enum SelectionType {
   All = 'all',
   None = 'none',
 }
+
+export type SelectAction = 'click' | 'check';
