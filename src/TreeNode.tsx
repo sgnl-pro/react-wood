@@ -63,8 +63,29 @@ export const TreeNode: FC<ITreeNodeProps> = ({
     }
     toggleExpanded(item, expanded);
   };
-  const onCheck = () => {
-    toggleSelected(item);
+
+  const renderChecker = (): ReactNode => {
+    if (
+      selectOn === 'check' &&
+      isSelectable(selectionType, isParent) === true
+    ) {
+      const onCheck = () => {
+        toggleSelected(item);
+      };
+      if (typeof renderCheckbox === 'function') {
+        return renderCheckbox(selected, onCheck);
+      } else {
+        return (
+          <input
+            type="checkbox"
+            checked={selected}
+            onChange={onCheck}
+            onClick={(e) => e.stopPropagation()}
+          />
+        );
+      }
+    }
+    return null;
   };
 
   const renderNode = (n: ITreeItem) => (
@@ -104,18 +125,7 @@ export const TreeNode: FC<ITreeNodeProps> = ({
           {typeof renderIcon === 'function' &&
             renderIcon(expanded, selected, isParent, item)}
         </NodeIcon>
-        {selectOn === 'check' &&
-        isSelectable(selectionType, isParent) &&
-        typeof renderCheckbox === 'function' ? (
-          renderCheckbox(selected, onCheck)
-        ) : (
-          <input
-            type="checkbox"
-            checked={selected}
-            onChange={onCheck}
-            onClick={(e) => e.stopPropagation()}
-          />
-        )}
+        {renderChecker()}
         <NodeLabel className={labelClassName}>{item.label}</NodeLabel>
         {typeof renderData === 'function' && renderData(item, selected)}
       </NodeContent>
