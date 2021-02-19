@@ -6,7 +6,7 @@ import { useTreeState } from './context/useTreeState';
 import { NodeContent } from './NodeContent';
 import { NodeLabel } from './NodeLabel';
 import { NodeIcon } from './NodeIcon';
-import s from './styles/Tree.module.sass';
+import './main.sass';
 
 const isSelectable = (selectionType: SelectionType, isParent: boolean) =>
   selectionType === SelectionType.All ||
@@ -116,9 +116,9 @@ export const TreeNode: FC<ITreeNodeProps> = ({
   return (
     <div
       className={cn(
-        s.node,
+        'S-Tree-node',
         className,
-        selected === true && [s.selected, activeClassName]
+        selected === true && ['S-Tree-node_selected', activeClassName]
       )}
     >
       <NodeContent className={contentClassName} onClick={onNodeClick}>
@@ -141,7 +141,9 @@ export const TreeNode: FC<ITreeNodeProps> = ({
         expanded &&
         (Array.isArray(item.children)
           ? item.children.map(renderNode)
-          : loader || <div className="Wood-info Wood-info_loading">...</div>)}
+          : loader || (
+              <div className="S-Tree-info S-Tree-info_loading">...</div>
+            ))}
     </div>
   );
 };

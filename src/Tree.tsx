@@ -1,9 +1,9 @@
 import React, { FC, ReactNode } from 'react';
 import cn from './utils/classNames';
+import { ITreeItem, SelectAction, SelectionType } from './types';
 import { TreeContextProvider } from './context/TreeContextProvider';
 import { TreeNode } from './TreeNode';
-import { ITreeItem, SelectAction, SelectionType } from './types';
-import s from './styles/Tree.module.sass';
+import './main.sass';
 
 export interface ITreeProps {
   nodes: ITreeItem[];
@@ -110,12 +110,12 @@ export const Tree: FC<ITreeProps> = ({
       onSelect={onSelect}
       onExpand={onNodeExpand}
     >
-      <div className={cn(s.container, containerClassName)}>
+      <div className={cn('S-Tree-container', containerClassName)}>
         {children}
         {!nodes?.length
           ? !children &&
             (noData || (
-              <div className="Wood-info Wood-info_noData">No data</div>
+              <div className="S-Tree-info S-Tree-info_noData">No data</div>
             ))
           : nodes.map(renderNode)}
       </div>
