@@ -1,6 +1,7 @@
 import React, { FC, ReactNode } from 'react';
 import cn from './utils/classNames';
 import { ITreeItem, SelectAction, SelectionType } from './types';
+import { TreeEventEmitter } from './TreeEventEmitter';
 import { TreeContextProvider } from './context/TreeContextProvider';
 import { TreeNode } from './TreeNode';
 import './main.sass';
@@ -60,6 +61,8 @@ export interface ITreeProps {
   loader?: ReactNode;
   /** Элемент для отображения отсутствия данных. */
   noData?: ReactNode;
+  /** Класс для генерирования событий в дереве. */
+  eventEmitter?: TreeEventEmitter;
 }
 
 export const Tree: FC<ITreeProps> = ({
@@ -82,6 +85,7 @@ export const Tree: FC<ITreeProps> = ({
   renderNodeIcon,
   loader,
   noData,
+  eventEmitter,
   children,
 }) => {
   const renderNode = (n: ITreeItem) => (
@@ -107,6 +111,7 @@ export const Tree: FC<ITreeProps> = ({
       selectionType={selectionType}
       multiSelect={multipleSelection}
       disabledIds={disabledIds}
+      eventEmitter={eventEmitter}
       onSelect={onSelect}
       onExpand={onNodeExpand}
     >

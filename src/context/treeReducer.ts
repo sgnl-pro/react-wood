@@ -22,6 +22,12 @@ export const actions = {
       node,
       allowMultiple,
     } as const),
+  setSelected: (nodes: ITreeItem[], fullUpdate: boolean) =>
+    ({
+      type: 'SET_SELECTED',
+      nodes,
+      fullUpdate,
+    } as const),
 };
 
 type Actions = typeof actions;
@@ -49,6 +55,19 @@ export const treeReducer = (state: ITreeState, action: Action) => {
       } else {
         selectedNodes = { [node.id]: selected === true ? undefined : node };
       }
+      return {
+        ...state,
+        selectedNodes,
+      };
+    }
+    case 'SET_SELECTED': {
+      const { nodes, fullUpdate } = action;
+      let selectedNodes: ITreeState['selectedNodes'] = fullUpdate
+        ? {}
+        : { ...state.selectedNodes };
+      nodes.forEach((n) => {
+        selectedNodes[n.id] = n;
+      });
       return {
         ...state,
         selectedNodes,

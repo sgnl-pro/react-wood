@@ -1,17 +1,13 @@
 import React, { FC, ReactNode } from 'react';
 import cn from './utils/classNames';
 import { ITreeItem, SelectAction, SelectionType } from './types';
+import { isSelectableItem } from './utils';
 import { useTreeActions } from './context/useTreeActions';
 import { useTreeState } from './context/useTreeState';
 import { NodeContent } from './NodeContent';
 import { NodeLabel } from './NodeLabel';
 import { NodeIcon } from './NodeIcon';
 import './main.sass';
-
-const isSelectable = (selectionType: SelectionType, isParent: boolean) =>
-  selectionType === SelectionType.All ||
-  (selectionType === SelectionType.Parent && isParent === true) ||
-  (selectionType === SelectionType.Child && isParent === false);
 
 export interface ITreeNodeProps {
   item: ITreeItem;
@@ -57,7 +53,7 @@ export const TreeNode: FC<ITreeNodeProps> = ({
   const expanded = expandedIds?.[item.id] === true;
   const selected = selectedNodes?.[item.id] !== undefined;
   const withCheckbox = selectOn === 'check';
-  const selectable = isSelectable(selectionType, isParent);
+  const selectable = isSelectableItem(selectionType, isParent);
 
   const onNodeClick = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
     e.stopPropagation();
